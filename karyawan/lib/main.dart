@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:karyawan/models/karyawan.dart';
+
 
 void main() {
   runApp(const MainApp());
@@ -10,10 +15,58 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+      debugShowCheckedModeBanner: false,
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget{
+  const MyHomePage({super.key});
+
+  // ✨ Tambahkan fungsi ini
+  Future<List<Karyawan>> _readJsonData() async {
+    final String response = await rootBundle.loadString('assets/karyawan.json');
+    final List<dynamic> data = json.decode(response);
+    return data.map((json) => Karyawan.fromJson(json)).toList();
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Data Karyawan"),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+      ),
+      body: FutureBuilder(
+        future: _readJsonData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final karyawan = snapshot.data![index];
+                return ListTile(
+                  title: Text(karyawan.nama),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Umur: ${karyawan.umur} tahun'),
+                      Text('Alamat: ${karyawan.alamat.jalan}, ${karyawan.alamat.kota}'), 
+                      Text('Hobi: ${karyawan.hobi.join(", ")}'),
+                    ],
+                  )
+                );
+              },
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
