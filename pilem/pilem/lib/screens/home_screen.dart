@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         _allMovies = allData.map((e) => Movie.fromJson(e)).toList();
-        _trendingMovies = trendingData.map((e) => Movie.fromJson(e)).toList();
+        _trendingMovies = trendingData.map((e) => Movie.fromJson(e)).toList();//unruk memanggil nya 
         _popularMovies = popularData.map((e) => Movie.fromJson(e)).toList();
         _isLoading = false;
       });
@@ -55,8 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     [
                       if (_trendingMovies.isNotEmpty)
                         _buildHeroBanner(_trendingMovies.first),
-                      _buildMoviesList('Now Playing', _allMovies),
-                      _buildMoviesList('Trending', _trendingMovies),
+                      _buildMoviesList('All Movies', _allMovies),
+                      _buildMoviesList('Trending', _trendingMovies),//untuk menambahkan tranding nya
                       _buildMoviesList('Popular', _popularMovies),
                       const SizedBox(height: 20),
                     ],
