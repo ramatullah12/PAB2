@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         _allMovies = allData.map((e) => Movie.fromJson(e)).toList();
-        _trendingMovies = trendingData.map((e) => Movie.fromJson(e)).toList();//unruk memanggil nya 
+        _trendingMovies = trendingData.map((e) => Movie.fromJson(e)).toList();
         _popularMovies = popularData.map((e) => Movie.fromJson(e)).toList();
         _isLoading = false;
       });
@@ -45,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xff0f172a),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : CustomScrollView(
@@ -55,10 +56,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     [
                       if (_trendingMovies.isNotEmpty)
                         _buildHeroBanner(_trendingMovies.first),
-                      _buildMoviesList('All Movies', _allMovies),
-                      _buildMoviesList('Trending', _trendingMovies),//untuk menambahkan tranding nya
-                      _buildMoviesList('Popular', _popularMovies),
-                      const SizedBox(height: 20),
+
+                      _buildMoviesList(' Trending ', _trendingMovies),
+                      _buildMoviesList(' Popular ', _popularMovies),
+                      _buildMoviesList(' All Movies ', _allMovies),
+
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
@@ -67,27 +70,33 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// 🔥 Professional AppBar
+  /// Premium AppBar
   Widget _buildAppBar() {
     return const SliverAppBar(
       floating: true,
-      pinned: false,
       backgroundColor: Colors.transparent,
       elevation: 0,
       title: Text(
         "🎬 Pilem",
         style: TextStyle(
-          fontSize: 26,
+          fontSize: 28,
           fontWeight: FontWeight.bold,
+          letterSpacing: 1,
         ),
       ),
+      actions: [
+        Padding(
+          padding: EdgeInsets.only(right: 15),
+          child: Icon(Icons.search),
+        )
+      ],
     );
   }
 
-  /// 🔥 Hero Banner (Film Besar di Atas)
+  /// Hero Banner
   Widget _buildHeroBanner(Movie movie) {
     return Container(
-      height: 450,
+      height: 460,
       margin: const EdgeInsets.only(bottom: 20),
       child: Stack(
         fit: StackFit.expand,
@@ -96,25 +105,52 @@ class _HomeScreenState extends State<HomeScreen> {
             'https://image.tmdb.org/t/p/w500${movie.backdropPath}',
             fit: BoxFit.cover,
           ),
+
+          /// gradient overlay
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.transparent, Colors.black87],
+                colors: [
+                  Colors.transparent,
+                  Colors.black,
+                ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
             ),
           ),
+
           Positioned(
             bottom: 40,
             left: 20,
             right: 20,
-            child: Text(
-              movie.title,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  movie.title,
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                Row(
+                  children: [
+                    const Icon(Icons.star, color: Colors.amber),
+                    const SizedBox(width: 5),
+                    Text(
+                      movie.voteAverage?.toStringAsFixed(1) ?? "0",
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 15),
+
+              ],
             ),
           )
         ],
@@ -122,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// 🔥 Horizontal Movie List
+  /// Movie List
   Widget _buildMoviesList(String title, List<Movie> movies) {
     if (movies.isEmpty) return const SizedBox();
 
@@ -130,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Text(
             title,
             style: const TextStyle(
@@ -139,8 +175,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+
         SizedBox(
-          height: 240,
+          height: 250,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: movies.length,
@@ -156,54 +193,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 child: Container(
-                  width: 140,
-                  margin: const EdgeInsets.only(right: 14),
+                  width: 150,
+                  margin: const EdgeInsets.only(right: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.network(
-                              movie.posterPath != null
-                                  ? 'https://image.tmdb.org/t/p/w500${movie.posterPath}'
-                                  : 'https://via.placeholder.com/150x220',
-                              height: 190,
-                              width: 140,
-                              fit: BoxFit.cover,
-                            ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(18),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black54,
+                              blurRadius: 10,
+                              offset: Offset(0, 5),
+                            )
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(18),
+                          child: Image.network(
+                            movie.posterPath != null
+                                ? 'https://image.tmdb.org/t/p/w500${movie.posterPath}'
+                                : 'https://via.placeholder.com/150x220',
+                            height: 200,
+                            width: 150,
+                            fit: BoxFit.cover,
                           ),
-
-                          /// ⭐ Rating Badge
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: Colors.black87,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.star,
-                                      color: Colors.amber, size: 14),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    movie.voteAverage
-                                            ?.toStringAsFixed(1) ??
-                                        "0",
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
+
                       const SizedBox(height: 8),
+
                       Text(
                         movie.title,
                         maxLines: 1,

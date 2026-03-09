@@ -8,11 +8,10 @@ class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, required this.movie});
 
   @override
-  DetailScreenState createState() => DetailScreenState();
+  State<DetailScreen> createState() => _DetailScreenState();
 }
 
-class DetailScreenState extends State<DetailScreen> {
-
+class _DetailScreenState extends State<DetailScreen> {
   bool _isFavorite = false;
 
   @override
@@ -60,14 +59,14 @@ class DetailScreenState extends State<DetailScreen> {
     final movie = widget.movie;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xff0f172a),
       body: CustomScrollView(
         slivers: [
 
-          /// APPBAR + POSTER
+          /// 🔥 HERO BANNER
           SliverAppBar(
-            expandedHeight: 350,
-            backgroundColor: Colors.black,
+            expandedHeight: 380,
+            backgroundColor: Colors.transparent,
             pinned: true,
 
             leading: IconButton(
@@ -88,11 +87,11 @@ class DetailScreenState extends State<DetailScreen> {
                   ),
 
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.9),
+                          Colors.black87,
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -104,98 +103,138 @@ class DetailScreenState extends State<DetailScreen> {
             ),
           ),
 
-          /// DETAIL MOVIE
+          /// 🔥 CONTENT
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 20,
-              ),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
-                  /// TITLE
-                  Text(
-                    movie.title,
-                    style: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-                  
-
-                  
-
-                  /// RATING + RELEASE + FAVORITE
+                  /// POSTER + TITLE
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
 
-                      /// RATING
+                      /// POSTER
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.amber,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black54,
+                              blurRadius: 10,
+                              offset: Offset(0, 5),
+                            )
+                          ],
                         ),
-                        child: Row(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: Image.network(
+                            movie.posterPath != null
+                                ? 'https://image.tmdb.org/t/p/w500${movie.posterPath}'
+                                : 'https://via.placeholder.com/150x220',
+                            height: 200,
+                            width: 130,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 20),
+
+                      /// TITLE + INFO
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.star,
-                                size: 16, color: Colors.black),
-                            const SizedBox(width: 5),
+
                             Text(
-                              movie.voteAverage.toStringAsFixed(1),
+                              movie.title,
                               style: const TextStyle(
+                                fontSize: 26,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                                color: Colors.white,
                               ),
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            Row(
+                              children: [
+
+                                const Icon(Icons.star,
+                                    color: Colors.amber),
+
+                                const SizedBox(width: 5),
+
+                                Text(
+                                  movie.voteAverage.toStringAsFixed(1),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+
+                                const SizedBox(width: 15),
+
+                                const Icon(Icons.calendar_today,
+                                    size: 16,
+                                    color: Colors.white70),
+
+                                const SizedBox(width: 5),
+
+                                Text(
+                                  movie.releaseDate,
+                                  style: const TextStyle(
+                                      color: Colors.white70),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 15),
+
+                            /// FAVORITE BUTTON
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: _isFavorite
+                                    ? Colors.red
+                                    : Colors.blue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(20),
+                                ),
+                              ),
+                              icon: Icon(
+                                _isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                              ),
+                              label: Text(
+                                _isFavorite
+                                    ? "Remove Favorite"
+                                    : "Add Favorite",
+                              ),
+                              onPressed: _toggleFavorite,
                             ),
                           ],
                         ),
-                      ),
-
-                      const SizedBox(width: 15),
-
-                      /// DATE
-                      const Icon(Icons.calendar_month,
-                          color: Colors.white70, size: 18),
-
-                      const SizedBox(width: 5),
-
-                      Text(
-                        movie.releaseDate,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                        ),
-                      ),
-
-                      const SizedBox(width: 15),
-
-                      /// FAVORITE BUTTON
-                      IconButton(
-                        icon: Icon(
-                          _isFavorite
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color:
-                              _isFavorite ? Colors.red : Colors.white,
-                        ),
-                        onPressed: _toggleFavorite,
-                      ),
+                      )
                     ],
                   ),
 
                   const SizedBox(height: 30),
 
-                  /// OVERVIEW TITLE
+                  /// PLAY BUTTON
+                  
+
+                  const SizedBox(height: 30),
+
+                  /// OVERVIEW
                   const Text(
                     "Overview",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -203,7 +242,6 @@ class DetailScreenState extends State<DetailScreen> {
 
                   const SizedBox(height: 12),
 
-                  /// OVERVIEW TEXT
                   Text(
                     movie.overview.isNotEmpty
                         ? movie.overview
@@ -211,7 +249,7 @@ class DetailScreenState extends State<DetailScreen> {
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 15,
-                      height: 1.5,
+                      height: 1.6,
                     ),
                   ),
 
