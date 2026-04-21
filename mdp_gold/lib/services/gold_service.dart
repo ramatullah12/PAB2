@@ -5,6 +5,11 @@ class GoldService {
   final DatabaseReference _dbRef =
       FirebaseDatabase.instance.ref("harga_emas");
 
+  Stream<DatabaseEvent> getPriceList() {
+    return _dbRef.onValue;
+  }
+
+  // (optional - tetap simpan kalau mau)
   Future<List<GoldModel>> getGoldPrices() async {
     final snapshot = await _dbRef.get();
 
