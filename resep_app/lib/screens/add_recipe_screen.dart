@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
 import '../services/firestore_service.dart';
 import '../utils/image_helper.dart';
 
@@ -45,14 +46,90 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final image = await ImageHelper.pickImage();
-    if (image != null) {
-      final base64 = await ImageHelper.toBase64(image);
-      setState(() {
-        _imageBase64 = base64;
-      });
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final image = await ImageHelper.pickImage(source: source);
+      if (image != null) {
+        final base64 = await ImageHelper.toBase64(image);
+        setState(() {
+          _imageBase64 = base64;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Gagal mengambil gambar: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
+  }
+
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Pilih Sumber Gambar",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildSourceButton(
+                  icon: Icons.camera_alt,
+                  label: "Kamera",
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage(ImageSource.camera);
+                  },
+                ),
+                _buildSourceButton(
+                  icon: Icons.photo_library,
+                  label: "Galeri",
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage(ImageSource.gallery);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSourceButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.deepOrange.shade100,
+            child: Icon(icon, size: 30, color: Colors.deepOrange),
+          ),
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
   }
 
   Future<void> _saveRecipe() async {
@@ -111,7 +188,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
             children: [
               // Image Picker
               GestureDetector(
-                onTap: _pickImage,
+                onTap: _showImageSourceDialog,
                 child: Container(
                   height: 200,
                   decoration: BoxDecoration(
