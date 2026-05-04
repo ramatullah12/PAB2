@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "222090421168",
+    "project_id": "resep-a3f28",
+    "storage_bucket": "resep-a3f28.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222090421168:android:93aaf00e99e04d04ad2c75",
+        "android_client_info": {
+          "package_name": "com.example.resep_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUSnQ35yS48hM-rINUAqRt2rDFWv9nnas"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
