@@ -6,24 +6,43 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'services/fcm_service.dart';
 
-// Background message handler (must be top-level function)
+// Background message handler
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  debugPrint('Handling a background message: ${message.messageId}');
-  
-  // If it's a data-only message (no notification object), we manually show it
-  if (message.notification == null && message.data.isNotEmpty) {
-    final title = message.data['title'] ?? 'Notifikasi Baru';
-    final body = message.data['body'] ?? 'Klik untuk melihat detail';
+Future<void> _firebaseMessagingBackgroundHandler(
+  RemoteMessage message,
+) async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    
-    // We need to re-initialize for the background isolate
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initSettings = InitializationSettings(android: androidSettings);
+  debugPrint(
+    'Handling a background message: ${message.messageId}',
+  );
+
+  // Jika data-only message
+  if (message.notification == null &&
+      message.data.isNotEmpty) {
+    final title =
+        message.data['title'] ?? 'Notifikasi Baru';
+
+    final body =
+        message.data['body'] ??
+        'Klik untuk melihat detail';
+
+    final flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    const androidSettings =
+        AndroidInitializationSettings(
+          '@mipmap/ic_launcher',
+        );
+
+    const initSettings = InitializationSettings(
+      android: androidSettings,
+    );
+
     await flutterLocalNotificationsPlugin.initialize(
-      settings: initSettings, // Use named parameter
+      settings: initSettings,
     );
 
     await flutterLocalNotificationsPlugin.show(
@@ -45,24 +64,53 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   try {
-    // Inisialisasi Firebase agar seluruh service Firebase dapat digunakan
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    
-    // Mendaftarkan background handler untuk menangani
-    // pesan FCM saat aplikasi berada di background/terminated
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // Inisialisasi Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    // Ambil token FCM
+    String? token =
+        await FirebaseMessaging.instance.getToken();
+
+    debugPrint("FCM TOKEN: $token");
+
+    // Request permission notifikasi
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+
+    debugPrint(
+      'User granted permission: ${settings.authorizationStatus}',
+    );
+
+    // Background handler
+    FirebaseMessaging.onBackgroundMessage(
+      _firebaseMessagingBackgroundHandler,
+    );
 
     // Inisialisasi service FCM
-    // Dijalankan async agar startup aplikasi lebih cepat
-    FcmService().initialize().catchError((e) {
-      // Menangkap error khusus saat proses inisialisasi FCM
-      debugPrint('Error initializing FCM: $e');
+    await FcmService().initialize();
+
+    // Listener saat app terbuka
+    FirebaseMessaging.onMessage.listen((
+      RemoteMessage message,
+    ) {
+      debugPrint(
+        'Foreground message received: ${message.notification?.title}',
+      );
     });
   } catch (e) {
-    // Menangkap error saat proses inisialisasi Firebase
-    debugPrint('Error during Firebase initialization: $e');
+    debugPrint(
+      'Error during Firebase initialization: $e',
+    );
   }
+
   runApp(const MainApp());
 }
 
@@ -74,7 +122,10 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'My Notes',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorSchemeSeed: Colors.deepPurple, useMaterial3: true),
+      theme: ThemeData(
+        colorSchemeSeed: Colors.deepPurple,
+        useMaterial3: true,
+      ),
       home: const NoteListScreen(),
     );
   }
