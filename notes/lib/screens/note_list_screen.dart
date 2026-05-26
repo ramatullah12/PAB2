@@ -241,46 +241,78 @@ class _NoteListScreenState
     final l10n =
         AppLocalizations.of(context)!;
 
+    final currentLocale =
+        Localizations.localeOf(
+          context,
+        ).languageCode;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor:
             Colors.deepPurple,
+
         foregroundColor:
             Colors.white,
+
         elevation: 0,
+
         title: Row(
           children: [
             const Icon(
               Icons.sticky_note_2,
             ),
+
             const SizedBox(width: 8),
-            Text(l10n.appTitle),
+
+            Text(
+              l10n.appTitle,
+            ),
           ],
         ),
+
         actions: [
           PopupMenuButton<String>(
             icon:
                 const Icon(Icons.language),
+
             tooltip:
                 l10n.language,
-            onSelected: (value) async {
-              if (value == 'id') {
-                await MainApp.setLocale(
-                  const Locale('id'),
-                );
-              } else if (value == 'en') {
-                await MainApp.setLocale(
-                  const Locale('en'),
-                );
-              }
+
+            onSelected: (code) async {
+              await MainApp.setLocale(
+                Locale(code),
+              );
             },
+
             itemBuilder: (context) => [
               PopupMenuItem<String>(
                 value: 'id',
+
                 child: Row(
                   children: [
+                    if (currentLocale ==
+                        'id')
+                      const Icon(
+                        Icons.check,
+                        size: 18,
+                        color:
+                            Colors.deepPurple,
+                      )
+                    else
+                      const SizedBox(
+                        width: 18,
+                      ),
+
+                    const SizedBox(
+                      width: 8,
+                    ),
+
                     const Text('🇮🇩'),
-                    const SizedBox(width: 8),
+
+                    const SizedBox(
+                      width: 8,
+                    ),
+
                     Text(
                       l10n
                           .languageIndonesian,
@@ -288,12 +320,35 @@ class _NoteListScreenState
                   ],
                 ),
               ),
+
               PopupMenuItem<String>(
                 value: 'en',
+
                 child: Row(
                   children: [
+                    if (currentLocale ==
+                        'en')
+                      const Icon(
+                        Icons.check,
+                        size: 18,
+                        color:
+                            Colors.deepPurple,
+                      )
+                    else
+                      const SizedBox(
+                        width: 18,
+                      ),
+
+                    const SizedBox(
+                      width: 8,
+                    ),
+
                     const Text('🇺🇸'),
-                    const SizedBox(width: 8),
+
+                    const SizedBox(
+                      width: 8,
+                    ),
+
                     Text(
                       l10n
                           .languageEnglish,
@@ -303,11 +358,14 @@ class _NoteListScreenState
               ),
             ],
           ),
+
           IconButton(
             icon:
                 const Icon(Icons.copy),
+
             tooltip:
                 l10n.copyFcmToken,
+
             onPressed: () async {
               final token =
                   await FirebaseMessaging
@@ -342,22 +400,27 @@ class _NoteListScreenState
           ),
         ],
       ),
+
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin:
                 Alignment.topCenter,
+
             end:
                 Alignment.bottomCenter,
+
             colors: [
               Colors.deepPurple.shade50,
               Colors.white,
             ],
           ),
         ),
+
         child: StreamBuilder<List<Note>>(
           stream:
               _noteService.getNotes(),
+
           builder:
               (context, snapshot) {
             if (snapshot
@@ -387,33 +450,44 @@ class _NoteListScreenState
                   mainAxisAlignment:
                       MainAxisAlignment
                           .center,
+
                   children: [
                     Icon(
                       Icons
                           .note_add_outlined,
+
                       size: 80,
+
                       color: Colors
                           .deepPurple
                           .shade200,
                     ),
+
                     const SizedBox(
                       height: 16,
                     ),
+
                     Text(
                       l10n.noNotes,
+
                       style: TextStyle(
                         fontSize: 20,
+
                         fontWeight:
                             FontWeight.bold,
+
                         color: Colors
                             .grey.shade700,
                       ),
                     ),
+
                     const SizedBox(
                       height: 8,
                     ),
+
                     Text(
                       l10n.addNoteHint,
+
                       style: TextStyle(
                         color: Colors
                             .grey.shade500,
@@ -429,8 +503,10 @@ class _NoteListScreenState
                   const EdgeInsets.all(
                 16,
               ),
+
               itemCount:
                   notes.length,
+
               itemBuilder:
                   (context, index) {
                 final note =
@@ -444,13 +520,17 @@ class _NoteListScreenState
           },
         ),
       ),
+
       floatingActionButton:
           FloatingActionButton(
         onPressed: _addNote,
+
         backgroundColor:
             Colors.deepPurple,
+
         foregroundColor:
             Colors.white,
+
         child: const Icon(Icons.add),
       ),
     );
@@ -462,7 +542,9 @@ class _NoteListScreenState
           const EdgeInsets.only(
         bottom: 16,
       ),
+
       elevation: 3,
+
       shape:
           RoundedRectangleBorder(
         borderRadius:
@@ -470,9 +552,11 @@ class _NoteListScreenState
           16,
         ),
       ),
+
       child: Column(
         crossAxisAlignment:
             CrossAxisAlignment.start,
+
         children: [
           if (note.imageBase64 !=
                   null &&
@@ -486,89 +570,118 @@ class _NoteListScreenState
                   16,
                 ),
               ),
+
               child: Image.memory(
                 base64Decode(
                   note.imageBase64!,
                 ),
+
                 height: 220,
+
                 width:
                     double.infinity,
+
                 fit: BoxFit.cover,
               ),
             ),
+
           Padding(
             padding:
                 const EdgeInsets.all(
               16,
             ),
+
             child: Column(
               crossAxisAlignment:
                   CrossAxisAlignment
                       .start,
+
               children: [
                 Text(
                   note.title,
+
                   style:
                       const TextStyle(
                     fontSize: 18,
+
                     fontWeight:
                         FontWeight.bold,
                   ),
                 ),
+
                 const SizedBox(
                   height: 8,
                 ),
+
                 Text(
                   note.description,
+
                   style: TextStyle(
                     fontSize: 14,
+
                     color: Colors
                         .grey.shade700,
+
                     height: 1.5,
                   ),
                 ),
+
                 const SizedBox(
                   height: 16,
                 ),
+
                 Row(
                   children: [
                     Icon(
                       Icons.access_time,
+
                       size: 14,
+
                       color: Colors
                           .grey.shade500,
                     ),
+
                     const SizedBox(
                       width: 4,
                     ),
+
                     Text(
                       _formatDate(
                         note.createdAt,
                       ),
+
                       style:
                           TextStyle(
                         fontSize: 12,
+
                         color: Colors
                             .grey
                             .shade500,
                       ),
                     ),
+
                     const Spacer(),
+
                     IconButton(
                       onPressed: () =>
                           _editNote(note),
+
                       icon: const Icon(
                         Icons.edit,
                       ),
+
                       color: Colors
                           .deepPurple,
                     ),
+
                     IconButton(
                       onPressed: () =>
                           _deleteNote(note),
+
                       icon: const Icon(
                         Icons.delete,
                       ),
+
                       color: Colors.red,
                     ),
                   ],
