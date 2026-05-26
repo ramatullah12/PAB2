@@ -258,74 +258,50 @@ class _NoteListScreenState
           ],
         ),
         actions: [
-          IconButton(
+          PopupMenuButton<String>(
             icon:
                 const Icon(Icons.language),
             tooltip:
                 l10n.language,
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return SafeArea(
-                    child: Column(
-                      mainAxisSize:
-                          MainAxisSize.min,
-                      children: [
-                        ListTile(
-                          leading:
-                              const Text(
-                            '🇮🇩',
-                            style: TextStyle(
-                              fontSize: 24,
-                            ),
-                          ),
-                          title: Text(
-                            l10n
-                                .languageIndonesian,
-                          ),
-                          onTap: () {
-                            MainApp.setLocale(
-                              const Locale(
-                                'id',
-                              ),
-                            );
-
-                            Navigator.pop(
-                              context,
-                            );
-                          },
-                        ),
-                        ListTile(
-                          leading:
-                              const Text(
-                            '🇺🇸',
-                            style: TextStyle(
-                              fontSize: 24,
-                            ),
-                          ),
-                          title: Text(
-                            l10n
-                                .languageEnglish,
-                          ),
-                          onTap: () {
-                            MainApp.setLocale(
-                              const Locale(
-                                'en',
-                              ),
-                            );
-
-                            Navigator.pop(
-                              context,
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
+            onSelected: (value) async {
+              if (value == 'id') {
+                await MainApp.setLocale(
+                  const Locale('id'),
+                );
+              } else if (value == 'en') {
+                await MainApp.setLocale(
+                  const Locale('en'),
+                );
+              }
             },
+            itemBuilder: (context) => [
+              PopupMenuItem<String>(
+                value: 'id',
+                child: Row(
+                  children: [
+                    const Text('🇮🇩'),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n
+                          .languageIndonesian,
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'en',
+                child: Row(
+                  children: [
+                    const Text('🇺🇸'),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n
+                          .languageEnglish,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           IconButton(
             icon:
@@ -396,37 +372,8 @@ class _NoteListScreenState
 
             if (snapshot.hasError) {
               return Center(
-                child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment
-                          .center,
-                  children: [
-                    Icon(
-                      Icons.error,
-                      size: 64,
-                      color:
-                          Colors.red.shade300,
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Text(
-                      l10n.errorOccurred,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors
-                            .grey.shade700,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      '${snapshot.error}',
-                      textAlign:
-                          TextAlign.center,
-                    ),
-                  ],
+                child: Text(
+                  l10n.errorOccurred,
                 ),
               );
             }
@@ -609,9 +556,7 @@ class _NoteListScreenState
                     const Spacer(),
                     IconButton(
                       onPressed: () =>
-                          _editNote(
-                        note,
-                      ),
+                          _editNote(note),
                       icon: const Icon(
                         Icons.edit,
                       ),
@@ -620,9 +565,7 @@ class _NoteListScreenState
                     ),
                     IconButton(
                       onPressed: () =>
-                          _deleteNote(
-                        note,
-                      ),
+                          _deleteNote(note),
                       icon: const Icon(
                         Icons.delete,
                       ),
