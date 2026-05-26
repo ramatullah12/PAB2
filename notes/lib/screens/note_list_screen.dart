@@ -10,6 +10,7 @@ import '../services/fcm_service.dart';
 import '../widgets/note_dialog.dart';
 import '../l10n/app_localizations.dart';
 import '../main.dart';
+import 'subscribe_screen.dart';
 
 class NoteListScreen extends StatefulWidget {
   const NoteListScreen({super.key});
@@ -132,10 +133,6 @@ class _NoteListScreenState
         await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(16),
-        ),
         title: Text(
           l10n.deleteNote,
         ),
@@ -161,12 +158,6 @@ class _NoteListScreenState
               context,
               true,
             ),
-            style:
-                ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor:
-                  Colors.white,
-            ),
             child: Text(
               l10n.delete,
             ),
@@ -189,8 +180,6 @@ class _NoteListScreenState
               content: Text(
                 l10n.noteDeleted,
               ),
-              backgroundColor:
-                  Colors.green,
             ),
           );
         }
@@ -204,8 +193,6 @@ class _NoteListScreenState
                   e.toString(),
                 ),
               ),
-              backgroundColor:
-                  Colors.red,
             ),
           );
         }
@@ -254,16 +241,12 @@ class _NoteListScreenState
         foregroundColor:
             Colors.white,
 
-        elevation: 0,
-
         title: Row(
           children: [
             const Icon(
               Icons.sticky_note_2,
             ),
-
             const SizedBox(width: 8),
-
             Text(
               l10n.appTitle,
             ),
@@ -360,6 +343,25 @@ class _NoteListScreenState
           ),
 
           IconButton(
+            icon: const Icon(
+              Icons.subscriptions,
+            ),
+
+            tooltip:
+                l10n.subscribeTooltip,
+
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      const SubscribeScreen(),
+                ),
+              );
+            },
+          ),
+
+          IconButton(
             icon:
                 const Icon(Icons.copy),
 
@@ -401,124 +403,196 @@ class _NoteListScreenState
         ],
       ),
 
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin:
-                Alignment.topCenter,
+      body: StreamBuilder<List<Note>>(
+        stream:
+            _noteService.getNotes(),
 
-            end:
-                Alignment.bottomCenter,
+        builder:
+            (context, snapshot) {
+          if (snapshot
+                  .connectionState ==
+              ConnectionState
+                  .waiting) {
+            return const Center(
+              child:
+                  CircularProgressIndicator(),
+            );
+          }
 
-            colors: [
-              Colors.deepPurple.shade50,
-              Colors.white,
-            ],
-          ),
-        ),
+          final notes =
+              snapshot.data ?? [];
 
-        child: StreamBuilder<List<Note>>(
-          stream:
-              _noteService.getNotes(),
+          if (notes.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment:
+                    MainAxisAlignment
+                        .center,
 
-          builder:
-              (context, snapshot) {
-            if (snapshot
-                    .connectionState ==
-                ConnectionState
-                    .waiting) {
-              return const Center(
-                child:
-                    CircularProgressIndicator(),
-              );
-            }
+                children: [
+                  Icon(
+                    Icons
+                        .note_add_outlined,
+                    size: 80,
+                    color: Colors
+                        .deepPurple
+                        .shade200,
+                  ),
 
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  l10n.errorOccurred,
+                  const SizedBox(
+                    height: 16,
+                  ),
+
+                  Text(
+                    l10n.noNotes,
+                    style:
+                        const TextStyle(
+                      fontSize: 20,
+                      fontWeight:
+                          FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(
+                    height: 8,
+                  ),
+
+                  Text(
+                    l10n.addNoteHint,
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            padding:
+                const EdgeInsets.all(
+              16,
+            ),
+
+            itemCount:
+                notes.length,
+
+            itemBuilder:
+                (context, index) {
+              final note =
+                  notes[index];
+
+              return Card(
+                margin:
+                    const EdgeInsets.only(
+                  bottom: 16,
                 ),
-              );
-            }
 
-            final notes =
-                snapshot.data ?? [];
-
-            if (notes.isEmpty) {
-              return Center(
                 child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment
-                          .center,
+                  crossAxisAlignment:
+                      CrossAxisAlignment
+                          .start,
 
                   children: [
-                    Icon(
-                      Icons
-                          .note_add_outlined,
-
-                      size: 80,
-
-                      color: Colors
-                          .deepPurple
-                          .shade200,
-                    ),
-
-                    const SizedBox(
-                      height: 16,
-                    ),
-
-                    Text(
-                      l10n.noNotes,
-
-                      style: TextStyle(
-                        fontSize: 20,
-
-                        fontWeight:
-                            FontWeight.bold,
-
-                        color: Colors
-                            .grey.shade700,
+                    if (note.imageBase64 !=
+                            null &&
+                        note.imageBase64!
+                            .isNotEmpty)
+                      Image.memory(
+                        base64Decode(
+                          note.imageBase64!,
+                        ),
+                        height: 220,
+                        width:
+                            double.infinity,
+                        fit: BoxFit.cover,
                       ),
-                    ),
 
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.all(
+                        16,
+                      ),
 
-                    Text(
-                      l10n.addNoteHint,
+                      child: Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment
+                                .start,
 
-                      style: TextStyle(
-                        color: Colors
-                            .grey.shade500,
+                        children: [
+                          Text(
+                            note.title,
+                            style:
+                                const TextStyle(
+                              fontSize: 18,
+                              fontWeight:
+                                  FontWeight.bold,
+                            ),
+                          ),
+
+                          const SizedBox(
+                            height: 8,
+                          ),
+
+                          Text(
+                            note.description,
+                          ),
+
+                          const SizedBox(
+                            height: 16,
+                          ),
+
+                          Row(
+                            children: [
+                              Icon(
+                                Icons
+                                    .access_time,
+                                size: 14,
+                                color: Colors
+                                    .grey,
+                              ),
+
+                              const SizedBox(
+                                width: 4,
+                              ),
+
+                              Text(
+                                _formatDate(
+                                  note.createdAt,
+                                ),
+                              ),
+
+                              const Spacer(),
+
+                              IconButton(
+                                onPressed: () =>
+                                    _editNote(
+                                  note,
+                                ),
+                                icon:
+                                    const Icon(
+                                  Icons.edit,
+                                ),
+                              ),
+
+                              IconButton(
+                                onPressed: () =>
+                                    _deleteNote(
+                                  note,
+                                ),
+                                icon:
+                                    const Icon(
+                                  Icons.delete,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               );
-            }
-
-            return ListView.builder(
-              padding:
-                  const EdgeInsets.all(
-                16,
-              ),
-
-              itemCount:
-                  notes.length,
-
-              itemBuilder:
-                  (context, index) {
-                final note =
-                    notes[index];
-
-                return _buildNoteCard(
-                  note,
-                );
-              },
-            );
-          },
-        ),
+            },
+          );
+        },
       ),
 
       floatingActionButton:
@@ -532,164 +606,6 @@ class _NoteListScreenState
             Colors.white,
 
         child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  Widget _buildNoteCard(Note note) {
-    return Card(
-      margin:
-          const EdgeInsets.only(
-        bottom: 16,
-      ),
-
-      elevation: 3,
-
-      shape:
-          RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.circular(
-          16,
-        ),
-      ),
-
-      child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-
-        children: [
-          if (note.imageBase64 !=
-                  null &&
-              note.imageBase64!
-                  .isNotEmpty)
-            ClipRRect(
-              borderRadius:
-                  const BorderRadius
-                      .vertical(
-                top: Radius.circular(
-                  16,
-                ),
-              ),
-
-              child: Image.memory(
-                base64Decode(
-                  note.imageBase64!,
-                ),
-
-                height: 220,
-
-                width:
-                    double.infinity,
-
-                fit: BoxFit.cover,
-              ),
-            ),
-
-          Padding(
-            padding:
-                const EdgeInsets.all(
-              16,
-            ),
-
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment
-                      .start,
-
-              children: [
-                Text(
-                  note.title,
-
-                  style:
-                      const TextStyle(
-                    fontSize: 18,
-
-                    fontWeight:
-                        FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 8,
-                ),
-
-                Text(
-                  note.description,
-
-                  style: TextStyle(
-                    fontSize: 14,
-
-                    color: Colors
-                        .grey.shade700,
-
-                    height: 1.5,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 16,
-                ),
-
-                Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-
-                      size: 14,
-
-                      color: Colors
-                          .grey.shade500,
-                    ),
-
-                    const SizedBox(
-                      width: 4,
-                    ),
-
-                    Text(
-                      _formatDate(
-                        note.createdAt,
-                      ),
-
-                      style:
-                          TextStyle(
-                        fontSize: 12,
-
-                        color: Colors
-                            .grey
-                            .shade500,
-                      ),
-                    ),
-
-                    const Spacer(),
-
-                    IconButton(
-                      onPressed: () =>
-                          _editNote(note),
-
-                      icon: const Icon(
-                        Icons.edit,
-                      ),
-
-                      color: Colors
-                          .deepPurple,
-                    ),
-
-                    IconButton(
-                      onPressed: () =>
-                          _deleteNote(note),
-
-                      icon: const Icon(
-                        Icons.delete,
-                      ),
-
-                      color: Colors.red,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
