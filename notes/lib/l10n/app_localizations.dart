@@ -104,6 +104,24 @@ abstract class AppLocalizations {
   /// **'My Notes'**
   String get appTitle;
 
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @languageIndonesian.
+  ///
+  /// In en, this message translates to:
+  /// **'Indonesian'**
+  String get languageIndonesian;
+
   /// No description provided for @subscribeTooltip.
   ///
   /// In en, this message translates to:
@@ -320,23 +338,17 @@ abstract class AppLocalizations {
   /// **'Already subscribed to topic: {topic}'**
   String alreadySubscribed(String topic);
 
-  /// No description provided for @language.
+  /// No description provided for @welcome.
   ///
   /// In en, this message translates to:
-  /// **'Language'**
-  String get language;
+  /// **'Welcome'**
+  String get welcome;
 
-  /// No description provided for @languageEnglish.
+  /// No description provided for @greeting.
   ///
   /// In en, this message translates to:
-  /// **'English'**
-  String get languageEnglish;
-
-  /// No description provided for @languageIndonesian.
-  ///
-  /// In en, this message translates to:
-  /// **'Indonesian'**
-  String get languageIndonesian;
+  /// **'Hello, {name}!'**
+  String greeting(String name);
 }
 
 class _AppLocalizationsDelegate

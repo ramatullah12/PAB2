@@ -12,6 +12,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'My Notes';
 
   @override
+  String get language => 'Language';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageIndonesian => 'Indonesian';
+
+  @override
   String get subscribeTooltip => 'Subscribe to Topic';
 
   @override
@@ -136,11 +145,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get language => 'Language';
+  String get welcome => 'Welcome';
 
   @override
-  String get languageEnglish => 'English';
-
-  @override
-  String get languageIndonesian => 'Indonesian';
+  String greeting(String name) {
+    return 'Hello, $name!';
+  }
 }

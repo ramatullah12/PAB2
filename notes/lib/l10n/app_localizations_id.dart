@@ -12,32 +12,41 @@ class AppLocalizationsId extends AppLocalizations {
   String get appTitle => 'Catatan Saya';
 
   @override
+  String get language => 'Bahasa';
+
+  @override
+  String get languageEnglish => 'Inggris';
+
+  @override
+  String get languageIndonesian => 'Indonesia';
+
+  @override
   String get subscribeTooltip => 'Langganan Topik';
 
   @override
   String get copyFcmToken => 'Salin Token FCM';
 
   @override
-  String get fcmTokenCopied => 'Token FCM disalin ke clipboard';
+  String get fcmTokenCopied => 'Token FCM berhasil disalin ke clipboard';
 
   @override
-  String get noteAdded => 'Note berhasil ditambahkan';
+  String get noteAdded => 'Catatan berhasil ditambahkan';
 
   @override
   String noteAddFailed(String error) {
-    return 'Gagal menambahkan note: $error';
+    return 'Gagal menambahkan catatan: $error';
   }
 
   @override
-  String get noteUpdated => 'Note berhasil diupdate';
+  String get noteUpdated => 'Catatan berhasil diperbarui';
 
   @override
   String noteUpdateFailed(String error) {
-    return 'Gagal mengupdate note: $error';
+    return 'Gagal memperbarui catatan: $error';
   }
 
   @override
-  String get deleteNote => 'Hapus Note';
+  String get deleteNote => 'Hapus Catatan';
 
   @override
   String deleteConfirm(String title) {
@@ -51,11 +60,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get delete => 'Hapus';
 
   @override
-  String get noteDeleted => 'Note berhasil dihapus';
+  String get noteDeleted => 'Catatan berhasil dihapus';
 
   @override
   String noteDeleteFailed(String error) {
-    return 'Gagal menghapus note: $error';
+    return 'Gagal menghapus catatan: $error';
   }
 
   @override
@@ -68,10 +77,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get addNoteHint => 'Tekan tombol + untuk menambahkan catatan';
 
   @override
-  String get addNote => 'Tambah Note';
+  String get addNote => 'Tambah Catatan';
 
   @override
-  String get editNote => 'Edit Note';
+  String get editNote => 'Edit Catatan';
 
   @override
   String get titleLabel => 'Judul';
@@ -91,7 +100,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get tapToAddImage => 'Ketuk untuk menambah gambar';
+  String get tapToAddImage => 'Ketuk untuk menambahkan gambar';
 
   @override
   String get changeImage => 'Ganti Gambar';
@@ -109,7 +118,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get customTopicTitle => 'Tambah Topik Kustom';
 
   @override
-  String get customTopicHint => 'Misal: hiburan, game';
+  String get customTopicHint => 'Contoh: hiburan, game';
 
   @override
   String get subscribe => 'Langganan';
@@ -122,7 +131,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String unsubscribedFromTopic(String topic) {
-    return 'Berhenti berlangganan dari topik: $topic';
+    return 'Berhasil berhenti berlangganan dari topik: $topic';
   }
 
   @override
@@ -136,11 +145,10 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get language => 'Bahasa';
+  String get welcome => 'Selamat Datang';
 
   @override
-  String get languageEnglish => 'Inggris';
-
-  @override
-  String get languageIndonesian => 'Indonesia';
+  String greeting(String name) {
+    return 'Halo, $name!';
+  }
 }
