@@ -57,7 +57,6 @@ class DefaultFirebaseOptions {
     projectId: 'resep-a3f28',
     storageBucket: 'resep-a3f28.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAVL8Wx9JeQtG98eguMuA3J4ZEvcNb3DHA',
     appId: '1:222090421168:ios:bd7be021519d0b40ad2c75',
@@ -66,7 +65,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'resep-a3f28.firebasestorage.app',
     iosBundleId: 'com.example.resepApp',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAVL8Wx9JeQtG98eguMuA3J4ZEvcNb3DHA',
     appId: '1:222090421168:ios:bd7be021519d0b40ad2c75',
@@ -85,5 +83,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'resep-a3f28.firebasestorage.app',
     measurementId: 'G-39FNQ631XL',
   );
-
 }
